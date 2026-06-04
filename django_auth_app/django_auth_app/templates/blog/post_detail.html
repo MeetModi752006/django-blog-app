@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+:root {
+    --primary: #4f46e5;
+    --danger: #ef4444;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+}
+
+/* Page */
+body {
+    background: var(--bg);
+}
+
+/* Page entry animation */
+.article-container {
+    max-width: 760px;
+    margin: 2.5rem auto;
+    padding: 0 1.2rem;
+    animation: pageIn 0.6s ease-out;
+}
+
+@keyframes pageIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 1.8rem;
+    transition: 0.2s;
+}
+
+.back-link:hover {
+    color: var(--primary);
+    transform: translateX(-3px);
+}
+
+/* Card */
+.article-card {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    animation: cardIn 0.7s ease-out;
+}
+
+/* hover lift */
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.07);
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Header */
+.article-header {
+    text-align: center;
+    margin-bottom: 2.2rem;
+}
+
+/* Title animation (code-like underline) */
+.article-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.25;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+/* animated underline */
+.article-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), #22c55e);
+    transition: all 0.6s ease;
+    transform: translateX(-50%);
+    border-radius: 10px;
+}
+
+.article-card:hover .article-title::after {
+    width: 60%;
+}
+
+/* Meta */
+.article-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.author {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Avatar pulse */
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--primary);
+    animation: pulse 2.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(79,70,229,0.2); }
+    70% { box-shadow: 0 0 0 8px rgba(79,70,229,0); }
+    100% { box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+
+/* Content reveal */
+.article-content {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: #374151;
+    animation: fadeContent 0.8s ease-out;
+}
+
+@keyframes fadeContent {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.article-content p {
+    margin-bottom: 1.4rem;
+}
+
+/* Divider */
+.divider {
+    margin: 2rem 0;
+    border: none;
+    border-top: 1px solid var(--border);
+    opacity: 0.7;
+}
+
+/* Actions */
+.admin-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+/* Edit glow */
+.btn-edit {
+    background: #eef2ff;
+    color: var(--primary);
+}
+
+.btn-edit:hover {
+    background: #e0e7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(79,70,229,0.15);
+}
+
+/* Delete glow */
+.btn-delete {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+.btn-delete:hover {
+    background: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(239,68,68,0.25);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .article-title {
+        font-size: 1.7rem;
+    }
+
+    .article-card {
+        padding: 2rem 1.4rem;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: stretch;
+    }
+}
+</style>
+
+<div class="article-container">
+
+    <a href="{% url 'blog:home' %}" class="back-link">
+        ← Back to posts
+    </a>
+
+    <div class="article-card">
+
+        <header class="article-header">
+            <h1 class="article-title">{{ post.title }}</h1>
+
+            <div class="article-meta">
+                <div class="avatar">
+                    {{ post.author.username|make_list|first|upper }}
+                </div>
+
+                <span>By <span class="author">{{ post.author.username }}</span></span>
+                <span>•</span>
+                <time>{{ post.created_at|date:"F d, Y" }}</time>
+
+                {% if not post.published %}
+                    <span class="badge">Draft</span>
+                {% endif %}
+            </div>
+        </header>
+
+        <hr class="divider">
+
+        <div class="article-content">
+            {{ post.content|linebreaks }}
+        </div>
+
+        {% if user.is_authenticated %}
+            {% if user == post.author or user.profile.is_admin_role %}
+                <div class="admin-actions">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">
+                        Author controls
+                    </span>
+
+                    <div>
+                        <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-edit">
+                            Edit
+                        </a>
+                        <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-delete">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

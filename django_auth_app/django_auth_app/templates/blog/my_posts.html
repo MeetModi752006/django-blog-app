@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% block title %}My Posts{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================
+       Page Header Section
+       Simple top bar with title and action button
+    ========================== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.03em;
+    }
+
+    /* =========================
+       Stats Overview Section
+       Quick summary chips for user posts
+    ========================== */
+    .stats-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    }
+
+    .stat-chip {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .stat-chip span {
+        color: var(--primary);
+        font-size: 1rem;
+        margin-left: 4px;
+    }
+
+    /* =========================
+       Blog Post Card Design
+       Each post displayed as a clean card
+    ========================== */
+    .post-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 1.5rem;
+        margin-bottom: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.5s ease-out backwards;
+    }
+
+    /* Slight lift effect when hovering over a post */
+    .post-card:hover {
+        box-shadow: 0 12px 24px rgba(99, 102, 241, 0.12);
+        transform: translateY(-4px);
+    }
+
+    .post-info {
+        flex: 1;
+    }
+
+    .post-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .post-title:hover {
+        color: var(--primary);
+    }
+
+    /* Meta information like date and status */
+    .post-meta {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* =========================
+       Status Badges (Published / Draft)
+    ========================== */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .badge-published {
+        background: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-draft {
+        background: #fff7ed;
+        color: #ea580c;
+        border: 1px solid #fed7aa;
+    }
+
+    /* =========================
+       Action Buttons (Edit/Delete)
+    ========================== */
+    .post-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .btn-edit {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    .btn-edit:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    /* =========================
+       Primary Button (Create Post)
+    ========================== */
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        transition: 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+    /* =========================
+       Empty State (No posts yet)
+    ========================== */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: #fcfcfd;
+        border: 2px dashed var(--border);
+        border-radius: 24px;
+    }
+
+    .empty-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* =========================
+       Animations
+    ========================== */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Top section: page title + create post button -->
+<div class="page-header">
+    <h1 class="page-title">📋 My Posts</h1>
+    <a href="{% url 'blog:post_create' %}" class="btn-primary">+ New Post</a>
+</div>
+
+{% if posts %}
+
+    <!-- Quick summary of user's posts -->
+    <div class="stats-bar">
+        <div class="stat-chip">
+            Total <span>{{ posts.count }}</span>
+        </div>
+
+        <!-- Note: both values are same here; can be improved in backend later -->
+        <div class="stat-chip">
+            Published <span>{{ posts.count }}</span>
+        </div>
+    </div>
+
+    <!-- Loop through all posts -->
+    {% for post in posts %}
+    <div class="post-card" style="animation-delay: 0.{{ forloop.counter }}s;">
+
+        <!-- Post information section -->
+        <div class="post-info">
+
+            <!-- Title links to full post view -->
+            <a href="{% url 'blog:post_detail' post.pk %}" class="post-title">
+                {{ post.title }}
+            </a>
+
+            <div class="post-meta">
+                <span>📅 {{ post.created_at|date:"M d, Y" }}</span>
+
+                <!-- Show status based on publish flag -->
+                {% if post.published %}
+                    <span class="badge badge-published">Published</span>
+                {% else %}
+                    <span class="badge badge-draft">Draft</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action buttons for editing and deleting -->
+        <div class="post-actions">
+            <a href="{% url 'blog:post_edit' post.pk %}" class="action-btn btn-edit">Edit</a>
+            <a href="{% url 'blog:post_delete' post.pk %}" class="action-btn btn-delete">Delete</a>
+        </div>
+
+    </div>
+    {% endfor %}
+
+{% else %}
+
+    <!-- Empty state when user has no posts -->
+    <div class="empty-state">
+        <div class="empty-icon">✍️</div>
+        <h2>No posts yet</h2>
+        <p>You haven’t created any content. Start writing your first post!</p>
+        <br>
+        <a href="{% url 'blog:post_create' %}" class="btn-primary">
+            Create Your First Post
+        </a>
+    </div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% block title %}Blog Home{% endblock %}
+
+{% block content %}
+
+<style>
+/* Color variables to keep design consistent */
+:root {
+    --accent: #6366f1;
+    --accent-dark: #4f46e5;
+    --background: #f8fafc;
+    --glass-bg: rgba(255,255,255,0.75);
+    --border-soft: rgba(255,255,255,0.3);
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+}
+
+/* Page background gradient */
+body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+/* Main container for blog content */
+.wrapper {
+    max-width: 1100px;
+    margin: auto;
+    padding: 2.5rem 1.2rem;
+}
+
+/* Top section with title and button */
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+
+    /* subtle glass effect */
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.6);
+    padding: 1.2rem 1.5rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+}
+
+.header-bar h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+}
+
+/* Primary action button */
+.action-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+    padding: 0.6rem 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99,102,241,0.3);
+}
+
+/* Grid layout for posts */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* Individual post card */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+}
+
+/* Lift effect on hover */
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+/* Placeholder image area */
+.card-image {
+    height: 180px;
+    background: linear-gradient(135deg, #c7d2fe, #e0e7ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Main content inside card */
+.card-body {
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Title styling */
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.card-title a {
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+.card-title a:hover {
+    color: var(--accent);
+}
+
+/* Author info */
+.meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+}
+
+/* Short preview text */
+.preview {
+    font-size: 0.92rem;
+    color: #475569;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+/* Footer with date + link */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+/* Read more link */
+.link-more {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.link-more:hover {
+    text-decoration: underline;
+}
+
+/* Small date badge */
+.date-tag {
+    font-size: 0.7rem;
+    background: #eef2ff;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+}
+
+/* Empty state styling when no posts exist */
+.empty-box {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-radius: 16px;
+    background: white;
+    border: 2px dashed #e2e8f0;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+    .header-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
+<div class="wrapper">
+
+    <!-- Header section: shows title and create button -->
+    <div class="header-bar">
+        <h2>📰 Recent Articles</h2>
+
+        {% if user.is_authenticated %}
+            <!-- Only logged-in users can create posts -->
+            <a href="{% url 'blog:post_create' %}" class="action-btn">
+                + New Post
+            </a>
+        {% endif %}
+    </div>
+
+    {% if posts %}
+        <div class="grid">
+            {% for post in posts %}
+                <div class="card">
+
+                    <!-- Placeholder visual (can replace with real image later) -->
+                    <div class="card-image">📝</div>
+
+                    <div class="card-body">
+
+                        <h3 class="card-title">
+                            <a href="{{ post.get_absolute_url }}">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+
+                        <!-- Display author username -->
+                        <div class="meta">
+                            By <strong>{{ post.author.username }}</strong>
+                        </div>
+
+                        <!-- Show shortened preview of content -->
+                        <p class="preview">
+                            {{ post.content|truncatewords:22 }}
+                        </p>
+
+                        <div class="card-footer">
+                            <!-- Display formatted date -->
+                            <span class="date-tag">
+                                {{ post.created_at|date:"M d, Y" }}
+                            </span>
+
+                            <a href="{{ post.get_absolute_url }}" class="link-more">
+                                Read →
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <!-- Shown when no posts exist -->
+        <div class="empty-box">
+            <h3>No articles available</h3>
+            <p>Be the first one to publish something!</p>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="action-btn">
+                    Create First Post
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

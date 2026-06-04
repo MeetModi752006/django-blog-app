@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-wrap {
+        max-width: 660px;
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Avatar + header */
+    .profile-top {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #6366f1;
+        color: #fff;
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+
+    .profile-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Role badge */
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .role-admin {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .role-user {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    /* Section title with line */
+    .section-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #374151;
+        margin: 2rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e2e8f0;
+    }
+
+    /* Fields */
+    .field {
+        margin-bottom: 1.2rem;
+    }
+
+    .field label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.35rem;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background: #f9fafb;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+        border-color: #6366f1;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Errors */
+    .field-error {
+        font-size: 0.8rem;
+        color: #dc2626;
+        margin-top: 0.3rem;
+        display: block;
+    }
+
+    /* Buttons */
+    .btn-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 0.8rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-save   { background: #6366f1; color: #fff; }
+    .btn-save:hover { background: #4f46e5; }
+
+    .btn-cancel { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+    .btn-cancel:hover { background: #e2e8f0; }
+</style>
+
+<div class="profile-wrap">
+    <div class="profile-card">
+
+        <!-- Top: avatar + username + role -->
+        <div class="profile-top">
+            <div class="avatar-circle">
+                {{ user.username|first|upper }}
+            </div>
+            <div class="profile-name">{{ user.username }}</div>
+            {% if user.profile.role == 'admin' %}
+                <span class="role-badge role-admin">Admin</span>
+            {% else %}
+                <span class="role-badge role-user">Regular User</span>
+            {% endif %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Section 1: basic account fields -->
+            <div class="section-title">Account Info</div>
+
+            {% for field in user_form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for err in field.errors %}
+                    <span class="field-error">{{ err }}</span>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <!-- Section 2: extra profile fields (bio, avatar) -->
+            <div class="section-title">Profile Details</div>
+
+            {% for field in profile_form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for err in field.errors %}
+                    <span class="field-error">{{ err }}</span>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <div class="btn-row">
+                <button type="submit" class="btn btn-save">Save Changes</button>
+                <a href="{% url 'blog:home' %}" class="btn btn-cancel">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

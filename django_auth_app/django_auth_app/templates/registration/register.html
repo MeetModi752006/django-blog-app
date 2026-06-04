@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<style>
+    .register-page {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: #f7f6f3;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .register-panel {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        width: 100%;
+        max-width: 860px;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.10);
+    }
+
+    /* ── Left visual side ── */
+    .register-visual {
+        background: #0f172a;
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-visual::before {
+        content: '';
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.12);
+        top: -60px;
+        right: -60px;
+    }
+
+    .register-visual::after {
+        content: '';
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(139, 92, 246, 0.10);
+        bottom: -30px;
+        left: -30px;
+    }
+
+    .brand-name {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.4rem;
+        color: #fff;
+        position: relative;
+        z-index: 1;
+    }
+
+    .brand-name span { color: #818cf8; }
+
+    .visual-center {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .icon-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        border: 3px solid rgba(129, 140, 248, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        animation: glow 3s ease-in-out infinite;
+    }
+
+    .icon-core {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.18);
+        border: 2px solid rgba(129, 140, 248, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(129,140,248,0.25); }
+        50%       { box-shadow: 0 0 0 14px rgba(129,140,248,0); }
+    }
+
+    .visual-quote {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.45rem;
+        color: #fff;
+        line-height: 1.35;
+        position: relative;
+        z-index: 1;
+    }
+
+    .visual-quote em {
+        font-style: normal;
+        color: #818cf8;
+    }
+
+    /* ── Right form side ── */
+    .register-form-side {
+        background: #ffffff;
+        padding: 2.5rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow-y: auto;
+    }
+
+    .form-tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #6366f1;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.7rem;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 0.4rem;
+    }
+
+    .form-caption {
+        font-size: 0.88rem;
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    /* Fields */
+    .input-block {
+        margin-bottom: 1.1rem;
+    }
+
+    .input-block label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.02em;
+    }
+
+    .input-block input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.93rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0f172a;
+        background: #fafafa;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .input-block input:focus {
+        border-color: #6366f1;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Help text */
+    .hint-text {
+        font-size: 0.76rem;
+        color: #94a3b8;
+        margin-top: 0.3rem;
+        line-height: 1.5;
+    }
+
+    /* Errors */
+    .err-box {
+        list-style: none;
+        padding: 0.5rem 0.8rem;
+        margin: 0.35rem 0 0;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+    }
+
+    .err-box li {
+        color: #dc2626;
+        font-size: 0.78rem;
+    }
+
+    /* Submit */
+    .btn-register {
+        width: 100%;
+        padding: 0.85rem;
+        background: #0f172a;
+        color: #fff;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        margin-top: 0.75rem;
+        letter-spacing: 0.02em;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-register:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+    }
+
+    /* Footer */
+    .form-footer {
+        text-align: center;
+        margin-top: 1.2rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    .form-footer a {
+        color: #6366f1;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .form-footer a:hover { text-decoration: underline; }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+        .register-panel { grid-template-columns: 1fr; }
+        .register-visual { padding: 2rem 1.5rem; }
+        .visual-quote { font-size: 1.2rem; }
+        .register-form-side { padding: 2rem 1.5rem; }
+    }
+</style>
+
+<div class="register-page">
+    <div class="register-panel">
+
+        <!-- Left visual panel -->
+        <div class="register-visual">
+            <div class="brand-name">Blog<span>.</span></div>
+
+            <div class="visual-center">
+                <div class="icon-ring">
+                    <div class="icon-core">📝</div>
+                </div>
+            </div>
+
+            <div class="visual-quote">
+                Join a community of <em>writers</em> sharing ideas daily.
+            </div>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="register-form-side">
+            <p class="form-tag">New Account</p>
+            <h2 class="form-title">Create your account</h2>
+            <p class="form-caption">Fill in the details below and start writing today.</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="input-block">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <p class="hint-text">{{ field.help_text|safe }}</p>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <ul class="err-box">
+                            {% for err in field.errors %}<li>{{ err }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-register">Create Account</button>
+            </form>
+
+            <div class="form-footer">
+                Already have an account?
+                <a href="{% url 'login' %}">Sign in</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
